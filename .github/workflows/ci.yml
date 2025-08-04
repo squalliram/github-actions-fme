@@ -31,8 +31,7 @@ jobs:
     steps:
       - name: Run Selenium tests if enabled
         if: ${{ fromJson(needs.split_evaluation.outputs.treatments).B2C_customer_journey == 'on' }}
-        #run: npm run test:selenium
-        run: echo "Running Selenium test..."
+        run: npm run test:selenium
 
   deploy:
     needs: [split_evaluation, test]
