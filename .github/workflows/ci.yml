@@ -1,0 +1,45 @@
+name: CI with Feature Flag Control
+
+on:
+  push:
+    branches:
+      - main
+
+jobs:
+  split_evaluation:
+    runs-on: ubuntu-latest
+    outputs:
+      treatments: ${{ steps.eval.outputs.result }}
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v3
+
+      - name: Evaluate feature flags
+        id: eval
+        uses: splitio/split-evaluator-action@v1.0
+        with:
+          api-key: "5cu2cs49k4s0kl706q790h8eu48p6j03kucp"
+          key: "iramkhan"
+          feature-flags: |
+            feature_flag_a
+            canary_deploy
+
+  test:
+    needs: split_evaluation
+    runs-on: ubuntu-latest
+    steps:
+      - name: Run unit tests
+        run: npm test
+
+      - name: Run Selenium tests if enabled
+        if: ${{ fromJson(needs.split_evaluation.outputs.treatments).feature_flag_a == 'on' }}
+        run: npm run test:selenium
+
+  deploy:
+    needs: [split_evaluation, test]
+    runs-on: ubuntu-latest
+    if: ${{ fromJson(needs.split_evaluation.outputs.treatments).canary_deploy == 'on' }}
+    steps:
+      - name: Deploy to staging
+        run: echo "Deploying to staging..."
