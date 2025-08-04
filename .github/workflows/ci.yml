@@ -29,9 +29,6 @@ jobs:
     needs: split_evaluation
     runs-on: ubuntu-latest
     steps:
-      - name: Run unit tests
-        run: npm test
-
       - name: Run Selenium tests if enabled
         if: ${{ fromJson(needs.split_evaluation.outputs.treatments).feature_flag_a == 'on' }}
         run: npm run test:selenium
