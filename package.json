@@ -1,5 +1,12 @@
 {
+  "name": "github-actions-fme",
+  "version": "1.0.0",
+  "description": "Selenium test project",
   "scripts": {
-  "test:selenium": "node seleniumTest.js"
-}
+    "test:selenium": "node seleniumTest.js"
+  },
+  "devDependencies": {
+    "selenium-webdriver": "^4.11.0",
+    "chromedriver": "^115.0.0"
+  }
 }
