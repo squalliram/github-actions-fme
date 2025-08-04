@@ -69,3 +69,32 @@ jobs:
         steps:
             - name: Deploy to PROD env
               run: echo 'deploying dynamic_boxes to PROD...'
+
+  run_pipeline:
+    needs: split_evaluation
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v3
+
+      - name: Debug evaluated flags
+        run: echo '${{ needs.evaluate_flags.outputs.flags }}'
+
+      - name: Run Canary Deploy Step
+        if: ${{ needs.split_evaluation.outputs.flags != '' && fromJson(needs.split_evaluation.outputs.flags).B2C_customer_journey == 'on' }}
+        run: echo "Running canary deploy..."
+
+      - name: Skip Canary Deploy
+        if: ${{ needs.split_evaluation.outputs.flags == '' || fromJson(needs.split_evaluation.outputs.flags).B2C_customer_journey != 'on' }}
+        run: echo "Skipping canary deploy – flag not enabled."
+
+      - name: Publish Artifacts to JFrog
+        if: ${{ needs.split_evaluation.outputs.flags != '' && fromJson(needs.split_evaluation.outputs.flags).dynamic_boxes == 'on' }}
+        run: |
+          echo "Publishing artifacts..."
+          # Insert actual JFrog CLI commands here
+          # jfrog rt upload ./build my-repo/
+
+      - name: Skip Artifact Publish
+        if: ${{ needs.split_evaluation.outputs.flags == '' || fromJson(needs.split_evaluation.outputs.flags).dynamic_boxes != 'on' }}
+        run: echo "Skipping artifact publish – flag not enabled."
