@@ -24,6 +24,8 @@ jobs:
 
       - name: Install dependencies
         run: npm install
+        working-directory: github-actions-fme
 
       - name: Run Selenium test
         run: npm run test:selenium
+        working-directory: github-actions-fme
