@@ -12,23 +12,6 @@ jobs:
       treatments: ${{ steps.eval.outputs.result }}
 
     steps:
-      - name: Checkout code
-        uses: actions/checkout@v3
-      
-      - name: Set up Node.js
-        uses: actions/setup-node@v3
-        with:
-          node-version: '18'
-
-      - name: Install Google Chrome
-        uses: browser-actions/setup-chrome@v1
-
-      - name: Install dependencies
-        run: npm install chromedriver selenium-webdriver
-
-      - name: Run Selenium test
-        run: npm run test:selenium
-
       - name: Evaluate feature flags
         id: eval
         uses: splitio/split-evaluator-action@v1.0.0
@@ -43,6 +26,20 @@ jobs:
     needs: split_evaluation
     runs-on: ubuntu-latest
     steps:
+      - name: Checkout code
+        uses: actions/checkout@v3
+      
+      - name: Set up Node.js
+        uses: actions/setup-node@v3
+        with:
+          node-version: '18'
+
+      - name: Install Google Chrome
+        uses: browser-actions/setup-chrome@v1
+
+      - name: Install dependencies
+        run: npm install chromedriver selenium-webdriver
+
       - name: Run Selenium tests if enabled
         if: ${{ fromJson(needs.split_evaluation.outputs.treatments).B2C_customer_journey == 'on' }}
         run: npm run test:selenium
