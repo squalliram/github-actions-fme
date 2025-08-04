@@ -5,14 +5,16 @@ on:
     branches:
       - main
 
-jobs:
-  selenium-test:
+jobs:   
+  split_evaluation:
     runs-on: ubuntu-latest
+    outputs:
+      treatments: ${{ steps.eval.outputs.result }}
 
     steps:
       - name: Checkout code
         uses: actions/checkout@v3
-
+      
       - name: Set up Node.js
         uses: actions/setup-node@v3
         with:
@@ -26,15 +28,6 @@ jobs:
 
       - name: Run Selenium test
         run: npm run test:selenium
-        
-  split_evaluation:
-    runs-on: ubuntu-latest
-    outputs:
-      treatments: ${{ steps.eval.outputs.result }}
-
-    steps:
-      - name: Checkout code
-        uses: actions/checkout@v3
 
       - name: Evaluate feature flags
         id: eval
