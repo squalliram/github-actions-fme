@@ -19,8 +19,8 @@ jobs:
         id: eval
         uses: splitio/split-evaluator-action@v1.0.0
         with:
-          api-key: "5cu2cs49k4s0kl706q790h8eu48p6j03kucp"
-          key: "a0"
+          api-key: ${{ secrets.SPLIT_API_KEY }}
+          key: ${{ secrets.SPLIT_EVAL_KEY }}
           feature-flags: |
             B2C_customer_journey
             dynamic_boxes
