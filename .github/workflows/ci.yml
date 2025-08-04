@@ -40,3 +40,32 @@ jobs:
     steps:
       - name: Deploy to staging
         run: echo "Deploying to staging..."
+
+  testing:
+        needs: split_evaluation
+        runs-on: ubuntu-latest
+        steps:
+            - name: Unit tests
+              run: echo 'running unit tests...'
+
+            - name: Integration tests
+              run: echo 'running integration tests...'
+
+            - name: Integration tests v2
+              if: ${{ fromJson(needs.split_evaluator.outputs.treatments).integration_tests_v2 == 'on' }}
+              run: echo 'running integration tests v2...'
+
+  deploy_canary:
+        needs: [split_evaluation, testing]
+        if: ${{ fromJson(needs.split_evaluator.outputs.treatments).canary_deploy == 'on' }}
+        runs-on: ubuntu-latest
+        steps:
+            - name: Deploy to CANARY env
+              run: echo 'deploying to CANARY...'
+
+  deploy_prod:
+        needs: [split_evaluation, testing]
+        runs-on: ubuntu-latest
+        steps:
+            - name: Deploy to PROD env
+              run: echo 'deploying to PROD...'
