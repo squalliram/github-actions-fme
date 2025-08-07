@@ -50,7 +50,7 @@ jobs:
     if: ${{ fromJson(needs.split_evaluation.outputs.treatments).dynamic_boxes == 'on' }}
     steps:
       - name: Deploy to staging
-        run: echo "Deploying to staging..."
+        run: echo "Deploying to staging with Daksh..."
 
   testing:
         needs: split_evaluation
